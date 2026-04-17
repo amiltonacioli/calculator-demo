@@ -1,186 +1,196 @@
-# 🧮 Calculator Demo
+# Calculator Demo
 
-A fullstack calculator application with a React frontend and a Go backend, designed using clean architecture and modern engineering practices.
+A full-stack calculator application with a React + TypeScript frontend and a Go backend microservice. The frontend calls the backend REST API to perform basic and advanced arithmetic operations.
 
----
+## Features
 
-## ✨ Features
+- Calculator-style React UI with keyboard and button input
+- Backend-powered calculations through a Go REST API
+- Basic operations: addition, subtraction, multiplication, division
+- Advanced operations: exponentiation, square root, percentage
+- Input validation and user-facing error messages
+- Responsive layout with mobile support
+- Unit tests for frontend and backend layers
 
-* Basic operations:
+## Tech Stack
 
-  * ADD
-  * SUBTRACT
-  * MULTIPLY
-  * DIVIDE
-* Advanced operations:
+- Frontend: React, TypeScript, Vite, Vitest, React Testing Library
+- Backend: Go, Gin, Google Wire, Testify, Gomock
+- Architecture: domain, service, handler, dto, mocks
 
-  * EXPONENT
-  * SQRT
-  * PERCENTAGE
-* Intuitive calculator-style UI (inspired by the Windows calculator)
-* Input validation and error handling
-* Responsive design (mobile-friendly)
-* Backend-ready API integration
-* Unit tests for frontend and backend
+## Project Structure
 
----
-
-## 🏗️ Tech Stack
-
-### Frontend
-
-* React
-* TypeScript
-* Vite
-* Vitest + React Testing Library
-
-### Backend
-
-* Go
-* Gin
-* Wire (Dependency Injection)
-* OpenTelemetry (observability scaffold)
-
----
-
-## 📁 Project Structure
-
-```bash
+```text
 calculator-demo/
-  calculator-web/   # React frontend
-  calculator-back/  # Go backend
+  calculator-back/      Go backend API
+  calculator-web/       React frontend
+  calculator-prompts/   Prompt history used during development
+  Makefile              Root project commands
+  README.md             Project documentation
 ```
 
----
+## Prerequisites
 
-## ⚙️ Getting Started
+- Go installed
+- Node.js and npm installed
+- `make` optional, because equivalent commands are listed below
 
-### 📦 Install dependencies
+## Setup
 
-From the repository root:
+Install frontend dependencies:
 
 ```bash
 npm install --prefix calculator-web
 ```
 
----
-
-## ▶️ Running the Application
-
-### Frontend
+Prepare backend dependencies:
 
 ```bash
-npm run dev --prefix calculator-web
+cd calculator-back
+go mod tidy
 ```
 
-Then open:
-👉 http://localhost:5173
+## Run The App
 
----
-
-### Backend (optional)
+Start the backend from the repository root:
 
 ```bash
 cd calculator-back
 go run .
 ```
 
-Backend will run on:
-👉 http://localhost:8080
+The backend runs at:
 
----
+```text
+http://localhost:8080
+```
 
-## 🧠 How It Works
+Start the frontend from another terminal:
 
-The calculator follows a familiar layout inspired by the Windows calculator, providing an intuitive and user-friendly experience.
+```bash
+npm run dev --prefix calculator-web
+```
 
-* Display area for showing results and feedback
-* Inputs for entering numeric values
-* Operation selector (ADD, SUBTRACT, MULTIPLY, etc.)
-* A single action button to perform the calculation
-* Clear result output
+The frontend runs at:
 
-This design ensures users can quickly perform calculations without a learning curve.
+```text
+http://localhost:5173
+```
 
----
+## API Usage
 
-## 🧪 Example Usage
+Endpoint:
 
-### Input
+```http
+POST /calculate
+```
+
+Example request:
 
 ```json
 {
   "operation": "ADD",
-  "a": 12,
-  "b": 8
+  "a": 10,
+  "b": 5
 }
 ```
 
-### Output
+Example curl:
+
+```bash
+curl -X POST http://localhost:8080/calculate \
+  -H "Content-Type: application/json" \
+  -d '{"operation":"ADD","a":10,"b":5}'
+```
+
+Example response:
 
 ```json
 {
-  "result": 20
+  "result": 15
 }
 ```
 
----
+Error response example:
 
-## 🖥️ UI Example (Calculator Flow)
-
-1. Enter `12` in **First number**
-2. Enter `8` in **Second number**
-3. Select **ADD**
-4. Click **Calculate**
-
-👉 Result displayed: **20**
-
----
-
-## ⚠️ Error Handling
-
-The application handles common errors:
-
-* Invalid input (non-numeric values)
-* Division by zero
-* Invalid operations
-
----
-
-## 🧪 Running Tests
-
-### Frontend
-
-```bash
-npm run test --prefix calculator-web
+```json
+{
+  "error": "division by zero"
+}
 ```
 
-### Backend
+## Operations
+
+- `ADD`: `a + b`
+- `SUBTRACT`: `a - b`
+- `MULTIPLY`: `a * b`
+- `DIVIDE`: `a / b`
+- `EXPONENT`: `a ^ b`
+- `SQRT`: square root of `a`
+- `PERCENTAGE`: percentage calculation using `a` and `b`
+
+## Tests
+
+Run frontend tests:
 
 ```bash
+npm test -- --run --prefix calculator-web
+```
+
+Run backend tests:
+
+```bash
+cd calculator-back
 go test ./...
 ```
 
----
+Run all tests with Make:
 
-## 🔧 Future Improvements
+```bash
+make test
+```
 
-* Add Docker support
-* Improve UI with a component library
-* Add API health checks
-* Enhance observability with OpenTelemetry dashboards
-* Add CI/CD pipeline
+## Coverage
 
----
+Run frontend coverage:
 
-## 📌 Notes
+```bash
+npm run test:coverage --prefix calculator-web
+```
 
-* The frontend can run independently using local calculation logic
-* Backend integration is optional but supported
-* Designed as a demo project for clean architecture and fullstack practices
+Run backend coverage:
 
----
+```bash
+cd calculator-back
+go test -coverprofile=coverageprofile ./...
+go tool cover -func=coverageprofile
+```
 
-## 🤝 Contributing
+Run all coverage commands with Make:
 
-Feel free to fork and improve the project.
+```bash
+make coverage
+```
+
+## Design Decisions
+
+- The backend owns calculation behavior and exposes it through a thin HTTP handler.
+- The frontend keeps parsing and validation close to the UI, then sends normalized API requests.
+- The backend service uses a strategy map for operations, making new operations easy to add.
+- Handler tests use Gomock so HTTP behavior can be tested without real service logic.
+- Frontend API calls are isolated in `calculator-web/src/calculatorApi.ts` to keep the component testable.
+
+## Prompt History
+
+The prompts used during development are saved under:
+
+```text
+calculator-prompts/
+```
+
+## Future Improvements
+
+- Add Docker support for full-stack deployment
+- Add CI/CD with test and coverage checks
+- Add a backend health endpoint
+- Expand OpenTelemetry tracing and metrics

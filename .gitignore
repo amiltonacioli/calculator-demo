@@ -6,6 +6,13 @@ bin/
 # Go
 *.test
 vendor/
+coverage.out
+coverageprofile
+
+# Frontend
+node_modules/
+dist/
+coverage/
 
 # IDE
 .vscode/

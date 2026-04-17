@@ -1,0 +1,172 @@
+Calculator Frontend Project Prompts Summary
+
+1. Step 1: Create Calculator UI Layout
+
+Goal:
+
+- Build a clean and intuitive calculator UI using React, TypeScript, and Vite.
+- Do not integrate with the backend yet.
+
+Requirements:
+
+- Create a main Calculator.tsx component.
+- Use functional React components.
+- Add state for operation, a, b, and result.
+- Include first number and second number inputs.
+- Include an operation dropdown with:
+  - ADD
+  - SUBTRACT
+  - MULTIPLY
+  - DIVIDE
+  - EXPONENT
+  - SQRT
+  - PERCENTAGE
+- Include a Calculate button.
+- Include a result display area.
+- Add clean centered layout and minimal styling.
+- Add Vitest and React Testing Library tests for:
+  - inputs render
+  - operation dropdown renders
+  - button renders
+
+2. Change to Calculator Button Grid
+
+Goal:
+
+- Replace the form layout with a calculator-style button grid.
+
+Requirements:
+
+- Add display showing current input.
+- Add buttons:
+  - numbers 0 through 9
+  - operators +, -, *, /
+  - equals =
+  - clear C
+- Use grid layout:
+  [ 7 | 8 | 9 | / ]
+  [ 4 | 5 | 6 | * ]
+  [ 1 | 2 | 3 | - ]
+  [ 0 | C | = | + ]
+- Make display right-aligned with large font.
+- Handle long numbers with overflow or shrinking.
+
+3. Add Keyboard Input and Advanced Operations
+
+Goal:
+
+- Support keyboard input and advanced operation buttons.
+
+Requirements:
+
+- Add keyboard input for numbers.
+- Add exponentiation, square root, and percentage as an extra operation column.
+- Update grid:
+  [ 7 | 8 | 9 | / | ^ ]
+  [ 4 | 5 | 6 | * | root ]
+  [ 1 | 2 | 3 | - | % ]
+  [ 0 | C | = | + | . ]
+- Add decimal support for floating point values.
+
+4. Step 2: Implement Local Calculator Logic
+
+Goal:
+
+- Perform calculations locally before backend integration.
+
+Requirements:
+
+- Extract calculator logic into a testable utility.
+- Handle all operations.
+- Compute result on button click.
+- Display result in the UI.
+- Add unit tests for calculation logic.
+- Add component test proving button click updates result.
+
+5. Step 3: Add Input Validation and Error Handling
+
+Goal:
+
+- Add validation and user-facing errors.
+
+Requirements:
+
+- Validate that inputs are numbers.
+- Show division by zero errors.
+- Show square root of negative number errors.
+- Add error state.
+- Show error message below the display.
+- Disable calculate button when invalid.
+- Keep pending expressions like 1.2+ error-free until equals is pressed.
+- Add tests for invalid input, division by zero, and disabled calculate button.
+
+6. Improve Button Layout
+
+Goal:
+
+- Improve calculator controls and responsiveness.
+
+Requirements:
+
+- Add a delete button.
+- Move delete into the row below the display.
+- Rename the delete button to del.
+- Place the control row as:
+  [ Error spans 3 columns | C | del ]
+- Keep C and del the same size as keypad buttons.
+- Make C and del light grey like operation buttons.
+- Add a subtle border and background to the empty error field.
+- Center the +/- button.
+- Keep number buttons white and operation columns light grey, similar to Windows Calculator.
+- Fix mobile responsiveness, especially iPhone SE width.
+
+7. Step 4: Make Calculator Responsive
+
+Goal:
+
+- Make the calculator work well on mobile.
+
+Requirements:
+
+- Stack and size controls properly on small screens.
+- Make buttons full width on mobile.
+- Add proper spacing.
+- Add basic rendering test.
+- Avoid external UI frameworks.
+
+8. Step 5: Integrate Frontend with Backend API
+
+Goal:
+
+- Replace local calculation with backend API calls.
+
+Requirements:
+
+- Add separated API service file.
+- Call backend endpoint:
+  POST http://localhost:8080/calculate
+- Send request body:
+  {
+    "operation": "ADD",
+    "a": 10,
+    "b": 5
+  }
+- Show loading state while calculating.
+- Display result from API response.
+- Handle API errors and show message to user.
+- Mock fetch in tests.
+- Test successful response and error response.
+
+9. Final Assignment Readiness
+
+Goal:
+
+- Compare the project against the assignment objectives.
+
+Requirements:
+
+- Check frontend, backend, tests, documentation, prompts, and deliverables.
+- Identify missing items.
+- Update documentation and commands.
+- Add coverage commands.
+- Add prompt history for frontend work.
