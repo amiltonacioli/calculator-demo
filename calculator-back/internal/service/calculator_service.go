@@ -12,6 +12,7 @@ var (
 	ErrInvalidOperation = errors.New("invalid operation")
 )
 
+//go:generate mockgen -destination=../mocks/mock_calculator.go -package=mocks calculator-back/internal/service CalculatorService
 type CalculatorService interface {
 	Calculate(op domain.Operation, a float64, b float64) (float64, error)
 }

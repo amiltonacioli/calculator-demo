@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"calculator-back/internal/domain"
+	"calculator-back/internal/mocks"
 	"calculator-back/internal/service"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -17,7 +18,7 @@ func TestCalculatorHandler_Calculate_Success(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	ctrl := gomock.NewController(t)
-	mockService := NewMockCalculatorService(ctrl)
+	mockService := mocks.NewMockCalculatorService(ctrl)
 	mockService.EXPECT().
 		Calculate(domain.ADD, 10.0, 5.0).
 		Return(15.0, nil)
@@ -39,7 +40,7 @@ func TestCalculatorHandler_Calculate_InvalidOperation(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	ctrl := gomock.NewController(t)
-	mockService := NewMockCalculatorService(ctrl)
+	mockService := mocks.NewMockCalculatorService(ctrl)
 
 	router := gin.New()
 	NewCalculatorHandler(mockService).RegisterRoutes(router)
@@ -58,7 +59,7 @@ func TestCalculatorHandler_Calculate_ServiceError(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	ctrl := gomock.NewController(t)
-	mockService := NewMockCalculatorService(ctrl)
+	mockService := mocks.NewMockCalculatorService(ctrl)
 	mockService.EXPECT().
 		Calculate(domain.DIVIDE, 10.0, 0.0).
 		Return(0.0, service.ErrDivisionByZero)
