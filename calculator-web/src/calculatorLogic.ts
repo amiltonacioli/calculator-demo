@@ -1,22 +1,17 @@
 const binaryOperators = ['+', '-', '*', '/', '^', '%']
+const rootOperator = '\u221A'
 
 export function calculateExpression(expression: string): string {
+  const error = validateExpression(expression)
+
+  if (error) {
+    return 'Error'
+  }
+
   const input = expression.trim()
 
-  if (!input) {
-    return '0'
-  }
-
-  if (input.startsWith('√')) {
-    return formatResult(squareRoot(input.slice(1)))
-  }
-
-  if (input.endsWith('√')) {
-    return formatResult(squareRoot(input.slice(0, -1)))
-  }
-
-  if (input.endsWith('%')) {
-    return formatResult(parseNumber(input.slice(0, -1)) / 100)
+  if (input.startsWith(rootOperator)) {
+    return formatResult(Math.sqrt(parseNumber(input.slice(1))))
   }
 
   const operatorIndex = findOperatorIndex(input)
@@ -28,10 +23,6 @@ export function calculateExpression(expression: string): string {
   const left = parseNumber(input.slice(0, operatorIndex))
   const right = parseNumber(input.slice(operatorIndex + 1))
 
-  if (Number.isNaN(left) || Number.isNaN(right)) {
-    return 'Error'
-  }
-
   switch (operator) {
     case '+':
       return formatResult(left + right)
@@ -40,7 +31,7 @@ export function calculateExpression(expression: string): string {
     case '*':
       return formatResult(left * right)
     case '/':
-      return right === 0 ? 'Error' : formatResult(left / right)
+      return formatResult(left / right)
     case '^':
       return formatResult(Math.pow(left, right))
     case '%':
@@ -48,6 +39,49 @@ export function calculateExpression(expression: string): string {
     default:
       return 'Error'
   }
+}
+
+export function validateExpression(expression: string): string | null {
+  const input = expression.trim()
+
+  if (!input || input === 'Error') {
+    return 'Invalid input'
+  }
+
+  if (input.startsWith(rootOperator)) {
+    const value = parseNumber(input.slice(1))
+
+    if (Number.isNaN(value)) {
+      return 'Invalid input'
+    }
+
+    if (value < 0) {
+      return 'Cannot calculate square root of a negative number'
+    }
+
+    return null
+  }
+
+  const operatorIndex = findOperatorIndex(input)
+  if (operatorIndex === -1) {
+    return isValidNumber(input) ? null : 'Invalid input'
+  }
+
+  const operator = input[operatorIndex]
+  const leftValue = input.slice(0, operatorIndex)
+  const rightValue = input.slice(operatorIndex + 1)
+
+  if (!isValidNumber(leftValue) || !isValidNumber(rightValue)) {
+    return 'Invalid input'
+  }
+
+  const right = parseNumber(rightValue)
+
+  if (operator === '/' && right === 0) {
+    return 'Cannot divide by zero'
+  }
+
+  return null
 }
 
 function findOperatorIndex(input: string) {
@@ -60,18 +94,12 @@ function findOperatorIndex(input: string) {
   return -1
 }
 
-function squareRoot(value: string) {
-  const number = parseNumber(value)
-
-  if (Number.isNaN(number) || number < 0) {
-    return Number.NaN
-  }
-
-  return Math.sqrt(number)
+function parseNumber(value: string) {
+  return value === '' ? Number.NaN : Number(value)
 }
 
-function parseNumber(value: string) {
-  return Number(value)
+function isValidNumber(value: string) {
+  return /^-?(?:\d+\.?\d*|\.\d+)$/.test(value)
 }
 
 function formatResult(value: number) {

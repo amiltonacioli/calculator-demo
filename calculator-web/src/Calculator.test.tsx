@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest'
 
 import { Calculator } from './Calculator'
 
+const rootSymbol = '\u221A'
+
 describe('Calculator', () => {
   it('renders display', () => {
     render(<Calculator />)
@@ -21,7 +23,7 @@ describe('Calculator', () => {
   it('renders operator and action buttons', () => {
     render(<Calculator />)
 
-    for (const button of ['+', '-', '*', '/', '^', '√', '%', '.', '=', 'C']) {
+    for (const button of ['+', '-', '*', '/', '^', rootSymbol, '%', '.', '=', 'C', '< del']) {
       expect(screen.getByRole('button', { name: button })).toBeInTheDocument()
     }
   })
@@ -70,5 +72,79 @@ describe('Calculator', () => {
     fireEvent.click(screen.getByRole('button', { name: '=' }))
 
     expect(screen.getByLabelText(/current input/i)).toHaveTextContent('15')
+  })
+
+  it('shows error for invalid input', () => {
+    render(<Calculator />)
+
+    fireEvent.click(screen.getByRole('button', { name: '7' }))
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Invalid input')
+  })
+
+  it('handles division by zero', () => {
+    render(<Calculator />)
+
+    fireEvent.click(screen.getByRole('button', { name: '7' }))
+    fireEvent.click(screen.getByRole('button', { name: '/' }))
+    fireEvent.click(screen.getByRole('button', { name: '0' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Cannot divide by zero')
+  })
+
+  it('disables calculate button when invalid', () => {
+    render(<Calculator />)
+
+    fireEvent.click(screen.getByRole('button', { name: '7' }))
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+
+    expect(screen.getByRole('button', { name: '=' })).toBeDisabled()
+  })
+
+  it('does not show error for pending expression before equals is clicked', () => {
+    render(<Calculator />)
+
+    fireEvent.click(screen.getByRole('button', { name: '1' }))
+    fireEvent.click(screen.getByRole('button', { name: '.' }))
+    fireEvent.click(screen.getByRole('button', { name: '2' }))
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '=' })).not.toBeDisabled()
+  })
+
+  it('shows error for pending expression after equals is clicked', () => {
+    render(<Calculator />)
+
+    fireEvent.click(screen.getByRole('button', { name: '1' }))
+    fireEvent.click(screen.getByRole('button', { name: '.' }))
+    fireEvent.click(screen.getByRole('button', { name: '2' }))
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    fireEvent.click(screen.getByRole('button', { name: '=' }))
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Invalid input')
+  })
+
+  it('deletes the last character when delete is clicked', () => {
+    render(<Calculator />)
+
+    fireEvent.click(screen.getByRole('button', { name: '1' }))
+    fireEvent.click(screen.getByRole('button', { name: '2' }))
+    fireEvent.click(screen.getByRole('button', { name: '< del' }))
+
+    expect(screen.getByLabelText(/current input/i)).toHaveTextContent('1')
+  })
+
+  it('deletes the last character when backspace is pressed', () => {
+    render(<Calculator />)
+
+    fireEvent.keyDown(window, { key: '4' })
+    fireEvent.keyDown(window, { key: '5' })
+    fireEvent.keyDown(window, { key: 'Backspace' })
+
+    expect(screen.getByLabelText(/current input/i)).toHaveTextContent('4')
   })
 })

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { calculateExpression } from './calculatorLogic'
+import { calculateExpression, validateExpression } from './calculatorLogic'
+
+const rootSymbol = '\u221A'
 
 describe('calculateExpression', () => {
   it('adds numbers', () => {
@@ -28,7 +30,7 @@ describe('calculateExpression', () => {
   })
 
   it('calculates square root', () => {
-    expect(calculateExpression('√25')).toBe('5')
+    expect(calculateExpression(`${rootSymbol}25`)).toBe('5')
   })
 
   it('calculates percentage of a number', () => {
@@ -37,5 +39,19 @@ describe('calculateExpression', () => {
 
   it('supports float numbers', () => {
     expect(calculateExpression('1.5+2.25')).toBe('3.75')
+  })
+
+  it('validates invalid input', () => {
+    expect(validateExpression('10++5')).toBe('Invalid input')
+  })
+
+  it('validates division by zero', () => {
+    expect(validateExpression('10/0')).toBe('Cannot divide by zero')
+  })
+
+  it('validates square root of a negative number', () => {
+    expect(validateExpression(`${rootSymbol}-9`)).toBe(
+      'Cannot calculate square root of a negative number',
+    )
   })
 })

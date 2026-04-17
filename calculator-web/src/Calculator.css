@@ -22,7 +22,7 @@ button {
   display: flex;
   justify-content: center;
   min-height: 100vh;
-  padding: 24px;
+  padding: 16px;
 }
 
 .calculator-shell {
@@ -31,9 +31,9 @@ button {
   border-radius: 8px;
   box-shadow: 0 18px 50px rgba(24, 33, 47, 0.08);
   display: grid;
-  gap: 18px;
-  max-width: 430px;
-  padding: 24px;
+  gap: 14px;
+  max-width: 460px;
+  padding: 20px;
   width: 100%;
 }
 
@@ -64,8 +64,16 @@ button {
 
 .calculator-grid {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.calculator-feedback {
+  align-items: center;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) 86px;
+  min-height: 44px;
 }
 
 .calculator-button,
@@ -89,7 +97,59 @@ button {
   border-color: #1677c7;
 }
 
+.calculator-button:disabled {
+  background: #d9e0e9;
+  border-color: #c7d0dc;
+  color: #6b7685;
+  cursor: not-allowed;
+}
+
 .calculator-button:focus {
+  outline: 3px solid rgba(22, 119, 199, 0.2);
+  outline-offset: 2px;
+}
+
+.calculator-error {
+  align-items: center;
+  background: #fff6f5;
+  border: 1px solid #ffd0cc;
+  border-radius: 8px;
+  color: #b42318;
+  display: flex;
+  font-size: 14px;
+  font-weight: 700;
+  min-height: 44px;
+  margin: 0;
+  overflow: hidden;
+  padding: 8px 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calculator-error-placeholder {
+  min-height: 44px;
+}
+
+.calculator-delete-button {
+  background: #ffffff;
+  border: 1px solid #b9c5d4;
+  border-radius: 8px;
+  color: #18212f;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  height: 44px;
+  padding: 0 10px;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.calculator-delete-button:hover {
+  background: #eaf3fb;
+  border-color: #1677c7;
+}
+
+.calculator-delete-button:focus {
   outline: 3px solid rgba(22, 119, 199, 0.2);
   outline-offset: 2px;
 }
