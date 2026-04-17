@@ -44,6 +44,33 @@ func TestCalculatorService_Calculate_Divide(t *testing.T) {
 	assert.Equal(t, 5.0, result)
 }
 
+func TestCalculatorService_Calculate_Exponent(t *testing.T) {
+	service := NewCalculatorService()
+
+	result, err := service.Calculate(domain.EXPONENT, 2, 3)
+
+	require.NoError(t, err)
+	assert.Equal(t, 8.0, result)
+}
+
+func TestCalculatorService_Calculate_SquareRoot(t *testing.T) {
+	service := NewCalculatorService()
+
+	result, err := service.Calculate(domain.SQRT, 25, 0)
+
+	require.NoError(t, err)
+	assert.Equal(t, 5.0, result)
+}
+
+func TestCalculatorService_Calculate_Percentage(t *testing.T) {
+	service := NewCalculatorService()
+
+	result, err := service.Calculate(domain.PERCENTAGE, 200, 10)
+
+	require.NoError(t, err)
+	assert.Equal(t, 20.0, result)
+}
+
 func TestCalculatorService_Calculate_DivisionByZero(t *testing.T) {
 	service := NewCalculatorService()
 
