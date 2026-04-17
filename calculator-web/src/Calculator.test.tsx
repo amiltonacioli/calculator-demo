@@ -60,4 +60,15 @@ describe('Calculator', () => {
 
     expect(screen.getByLabelText(/current input/i)).toHaveTextContent('0')
   })
+
+  it('updates result when equals is clicked', () => {
+    render(<Calculator />)
+
+    fireEvent.click(screen.getByRole('button', { name: '7' }))
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    fireEvent.click(screen.getByRole('button', { name: '8' }))
+    fireEvent.click(screen.getByRole('button', { name: '=' }))
+
+    expect(screen.getByLabelText(/current input/i)).toHaveTextContent('15')
+  })
 })

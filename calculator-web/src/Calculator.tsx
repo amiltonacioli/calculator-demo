@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './Calculator.css'
+import { calculateExpression } from './calculatorLogic'
 
 const buttons = [
   '7',
@@ -34,6 +35,7 @@ export function Calculator() {
     }
 
     if (value === '=') {
+      setCurrentInput((previous) => calculateExpression(previous))
       return
     }
 
