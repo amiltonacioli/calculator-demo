@@ -21,12 +21,14 @@ const buttons = [
   '3',
   '-',
   '%',
-  'C',
+  '+/-',
   '0',
   '.',
   '+',
   '=',
 ]
+
+const operationButtons = new Set(['/', '^', '*', rootSymbol, '-', '%', '+', '='])
 
 export function Calculator() {
   const [currentInput, setCurrentInput] = useState('0')
@@ -92,6 +94,12 @@ export function Calculator() {
 
         return `${previous}${rootSymbol}`
       })
+      return
+    }
+
+    if (value === '+/-') {
+      setError('')
+      setCurrentInput((previous) => toggleSign(previous))
       return
     }
 
@@ -163,18 +171,31 @@ export function Calculator() {
           )}
 
           <button
+            className="calculator-clear-button"
+            type="button"
+            onClick={() => handleButtonClick('C')}
+          >
+            C
+          </button>
+          <button
             className="calculator-delete-button"
             type="button"
             onClick={() => handleButtonClick('<')}
           >
-            {'< del'}
+            del
           </button>
         </div>
 
         <div className="calculator-grid" aria-label="Calculator buttons">
           {buttons.map((button) => (
             <button
-              className="calculator-button"
+              className={[
+                'calculator-button',
+                button === '+/-' ? 'calculator-button-sign' : '',
+                operationButtons.has(button) ? 'calculator-button-operation' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
               disabled={button === '=' && isCalculateDisabled}
               key={button}
               type="button"
@@ -192,6 +213,54 @@ export function Calculator() {
 function isPendingExpression(value: string) {
   return (
     /^-?(?:\d+\.?\d*|\.\d+)[+\-*/^%]$/.test(value) ||
-    value === rootSymbol
+    value === rootSymbol ||
+    value === '-' ||
+    value === '-'+rootSymbol
   )
+}
+
+function toggleSign(value: string) {
+  if (value === '0' || value === 'Error') {
+    return '-'
+  }
+
+  if (value === '-') {
+    return '0'
+  }
+
+  if (value === rootSymbol) {
+    return `-${rootSymbol}`
+  }
+
+  if (value === `-${rootSymbol}`) {
+    return rootSymbol
+  }
+
+  const operatorIndex = findOperatorIndex(value)
+  if (operatorIndex === -1) {
+    return value.startsWith('-') ? value.slice(1) : `-${value}`
+  }
+
+  const left = value.slice(0, operatorIndex + 1)
+  const right = value.slice(operatorIndex + 1)
+
+  if (right === '') {
+    return value
+  }
+
+  if (right.startsWith('-')) {
+    return `${left}${right.slice(1)}`
+  }
+
+  return `${left}-${right}`
+}
+
+function findOperatorIndex(value: string) {
+  for (let index = 1; index < value.length; index += 1) {
+    if (['+', '-', '*', '/', '^', '%'].includes(value[index])) {
+      return index
+    }
+  }
+
+  return -1
 }

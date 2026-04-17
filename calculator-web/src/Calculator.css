@@ -31,9 +31,9 @@ button {
   border-radius: 8px;
   box-shadow: 0 18px 50px rgba(24, 33, 47, 0.08);
   display: grid;
-  gap: 14px;
+  gap: 10px;
   max-width: 460px;
-  padding: 20px;
+  padding: 16px;
   width: 100%;
 }
 
@@ -53,7 +53,7 @@ button {
   font-weight: 700;
   justify-content: flex-end;
   line-height: 1.1;
-  min-height: 82px;
+  min-height: 72px;
   overflow: hidden;
   padding: 16px;
   text-align: right;
@@ -72,8 +72,36 @@ button {
   align-items: center;
   display: grid;
   gap: 8px;
-  grid-template-columns: minmax(0, 1fr) 86px;
-  min-height: 44px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.calculator-clear-button,
+.calculator-delete-button {
+  aspect-ratio: 1;
+  background: #eef1f5;
+  border: 1px solid #cfd7e2;
+  border-radius: 8px;
+  color: #18212f;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  height: auto;
+  min-width: 0;
+  padding: 0;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.calculator-clear-button:hover,
+.calculator-delete-button:hover {
+  background: #eaf3fb;
+  border-color: #1677c7;
+}
+
+.calculator-clear-button:focus,
+.calculator-delete-button:focus {
+  outline: 3px solid rgba(22, 119, 199, 0.2);
+  outline-offset: 2px;
 }
 
 .calculator-button,
@@ -83,13 +111,28 @@ button {
 }
 
 .calculator-button {
+  align-items: center;
   background: #ffffff;
   border: 1px solid #b9c5d4;
   border-radius: 8px;
   color: #18212f;
   cursor: pointer;
+  display: flex;
   font-size: 24px;
   font-weight: 700;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  text-align: center;
+}
+
+.calculator-button-sign {
+  font-size: 20px;
+}
+
+.calculator-button-operation {
+  background: #eef1f5;
+  border-color: #cfd7e2;
 }
 
 .calculator-button:hover {
@@ -118,7 +161,8 @@ button {
   display: flex;
   font-size: 14px;
   font-weight: 700;
-  min-height: 44px;
+  grid-column: span 3;
+  height: 100%;
   margin: 0;
   overflow: hidden;
   padding: 8px 10px;
@@ -127,44 +171,25 @@ button {
 }
 
 .calculator-error-placeholder {
-  min-height: 44px;
-}
-
-.calculator-delete-button {
-  background: #ffffff;
-  border: 1px solid #b9c5d4;
+  background: #fafbfc;
+  border: 1px solid #e4e9f0;
   border-radius: 8px;
-  color: #18212f;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 700;
-  height: 44px;
-  padding: 0 10px;
-  white-space: nowrap;
-  width: 100%;
-}
-
-.calculator-delete-button:hover {
-  background: #eaf3fb;
-  border-color: #1677c7;
-}
-
-.calculator-delete-button:focus {
-  outline: 3px solid rgba(22, 119, 199, 0.2);
-  outline-offset: 2px;
+  grid-column: span 3;
+  min-height: 100%;
 }
 
 @media (max-width: 480px) {
   .calculator-page {
     align-items: stretch;
-    padding: 12px;
+    padding: 8px;
   }
 
   .calculator-shell {
     align-self: center;
-    gap: 12px;
+    gap: 8px;
     max-width: 100%;
-    padding: 16px;
+    padding: 10px;
+    width: calc(100vw - 16px);
   }
 
   .calculator-shell h1 {
@@ -173,12 +198,12 @@ button {
 
   .calculator-display {
     font-size: 32px;
-    min-height: 72px;
+    min-height: 62px;
     padding: 12px;
   }
 
   .calculator-feedback {
-    grid-template-columns: minmax(0, 1fr) 78px;
+    gap: 8px;
   }
 
   .calculator-grid {
@@ -190,31 +215,48 @@ button {
     width: 100%;
   }
 
+  .calculator-clear-button,
   .calculator-delete-button {
     font-size: 14px;
-    width: 100%;
   }
 }
 
 @media (max-width: 340px) {
   .calculator-page {
-    padding: 8px;
+    padding: 0;
   }
 
   .calculator-shell {
-    padding: 12px;
+    gap: 7px;
+    padding: 8px;
+    width: 100vw;
   }
 
   .calculator-display {
-    font-size: 28px;
-    min-height: 64px;
+    font-size: 26px;
+    min-height: 54px;
+    padding: 10px;
   }
 
   .calculator-grid {
-    gap: 6px;
+    gap: 5px;
   }
 
   .calculator-button {
-    font-size: 18px;
+    font-size: 17px;
+  }
+
+  .calculator-button-sign {
+    font-size: 14px;
+  }
+
+  .calculator-error {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .calculator-clear-button,
+  .calculator-delete-button {
+    font-size: 13px;
   }
 }

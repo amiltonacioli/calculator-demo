@@ -38,7 +38,7 @@ describe('Calculator', () => {
   it('renders operator and action buttons', () => {
     render(<Calculator />)
 
-    for (const button of ['+', '-', '*', '/', '^', rootSymbol, '%', '.', '=', 'C', '< del']) {
+    for (const button of ['+', '-', '*', '/', '^', rootSymbol, '%', '.', '=', 'C', 'del', '+/-']) {
       expect(screen.getByRole('button', { name: button })).toBeInTheDocument()
     }
   })
@@ -205,7 +205,7 @@ describe('Calculator', () => {
 
     fireEvent.click(screen.getByRole('button', { name: '1' }))
     fireEvent.click(screen.getByRole('button', { name: '2' }))
-    fireEvent.click(screen.getByRole('button', { name: '< del' }))
+    fireEvent.click(screen.getByRole('button', { name: 'del' }))
 
     expect(screen.getByLabelText(/current input/i)).toHaveTextContent('1')
   })
