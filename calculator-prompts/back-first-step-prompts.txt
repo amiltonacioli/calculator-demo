@@ -283,28 +283,75 @@ Requirements:
 - Add calculator-back/README.md.
 - Use the README content from the previous prompt.
 
-9. Create Prompt History File
+9. Refactor and Fix Google Wire Configuration
 
 Goal:
 
-- Save a summary of all backend prompts for this project.
+- Refactor and fix the existing calculator-back/wire.go file for a Go HTTP service.
+- Ensure the Wire configuration is correct, idiomatic, and compiles without conflicts.
+- Ensure the configuration works with the wire command.
 
-Requirements:
+Build constraint requirements:
 
-- Create a new folder:
-  - colculator-prompts
-- Create:
-  - colculator-prompts/back-first-step-prompts.txt
-- Summarize the backend prompts already sent in this project.
+- Ensure wire.go starts with:
+  //go:build wireinject
+  // +build wireinject
+- These build constraints must be the first lines in the file.
+- No blank lines should appear above the build constraints.
 
-10. Update Prompt History with Earlier Steps
+Function signature requirements:
 
-Goal:
+- Keep the application initialization signature:
+  func InitializeApp(ctx context.Context) (*gin.Engine, logr.Logger, func(context.Context) error, error)
 
-- Add missing early project prompts to the prompt history file.
+Wire setup requirements:
 
-Requirements:
+- Use wire.Build(...) properly.
+- Ensure all dependencies are wired through providers.
+- Include providers for:
+  - Logger
+  - TracerProvider
+  - CalculatorService
+  - HTTP handler
+  - Router
+- Do not manually instantiate dependencies inside the Wire injector.
+- Remove duplicate or conflicting providers.
+- Avoid circular dependencies.
+- Ensure correct provider and parameter types, including *trace.TracerProvider.
 
-- Add the first domain enum/testing step.
-- Add the earlier scaffolding prompt from the previous day in a structured way.
-- Keep the file organized and readable.
+Router requirements:
+
+- Keep router creation in a separate function such as newRouter.
+- Inject router dependencies through function parameters.
+- Do not instantiate handler, logger, service, or tracer dependencies inside newRouter.
+
+Cleanup requirements:
+
+- Ensure the tracer provider shutdown function has this type:
+  func(context.Context) error
+- Ensure the shutdown function is propagated back to InitializeApp.
+
+Follow-up Wire error:
+
+- Running wire produced:
+  wire.go:21:1: inject InitializeApp: too many return values
+- Fix the Wire graph so generation succeeds.
+- Preserve the public InitializeApp signature used by main.go.
+- Use an internal Wire-generated initializer if needed.
+- Move normal runtime assembly helpers outside wire.go when necessary.
+
+Implemented structure:
+
+- Keep wire.go as the wireinject file.
+- Add an internal Wire injector:
+  initializeApp(ctx context.Context) (*appComponents, error)
+- Add app.go for normal build code:
+  - InitializeApp wrapper
+  - appComponents struct
+  - telemetry resource wrapper
+  - provider helpers for tracer provider and shutdown
+  - newRouter
+  - middleware functions
+- Regenerate wire_gen.go with the wire command.
+- Verify with:
+  go test ./...
