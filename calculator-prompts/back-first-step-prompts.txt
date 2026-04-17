@@ -1,0 +1,310 @@
+Calculator Backend Project Prompts Summary
+
+0. Initial Scaffolding Prompt
+
+Goal:
+
+- Scaffold a calculator demo project with a Go backend and React frontend.
+- Prepare the backend for a clean, layered calculator API implementation.
+- Keep the first version as a scaffold, with real business logic added later.
+
+Backend requirements:
+
+- Create a Go backend module under calculator-back.
+- Use Gin as the HTTP framework.
+- Add an application entrypoint in main.go.
+- Run the backend on port 8080.
+- Prepare dependency injection wiring with Google Wire:
+  - wire.go
+  - wire_gen.go
+- Add a router setup with middleware placeholders.
+- Add CORS middleware.
+- Add request logging middleware.
+- Add tracing middleware scaffold.
+- Add a logger package:
+  - internal/log/logger.go
+- Add an OpenTelemetry scaffold:
+  - internal/telemetry/otel.go
+- Add an initial calculator HTTP handler scaffold:
+  - internal/handlers/calc_handler.go
+- Return a not implemented response from the scaffold handler.
+- Keep the backend ready for future domain, service, and handler layers.
+
+Frontend requirements:
+
+- Create a React + Vite frontend under calculator-web.
+- Add a calculator UI scaffold.
+- Include disabled inputs for:
+  - Operand A
+  - Operand B
+- Include operation buttons for:
+  - add
+  - subtract
+  - multiply
+  - divide
+  - power
+  - sqrt
+  - percentage
+- Include a disabled Calculate button.
+- Include an output panel placeholder.
+- Keep the UI as a scaffold until backend API wiring is implemented.
+
+Project structure from scaffold:
+
+- calculator-back/
+  - main.go
+  - wire.go
+  - wire_gen.go
+  - internal/handlers
+  - internal/log
+  - internal/service
+  - internal/telemetry
+- calculator-web/
+  - src/App.tsx
+  - src/App.css
+  - Vite and React config files
+
+1. Step 1: Add Operation Enum and Tests
+
+Goal:
+
+- Define the calculator operation enum in the domain layer.
+- Add tests for operation validation.
+
+Requirements:
+
+- Create calculator-back/internal/domain/operation.go.
+- Define Operation as a string-based domain type.
+- Add operation constants:
+  - ADD
+  - SUBTRACT
+  - MULTIPLY
+  - DIVIDE
+  - EXPONENT
+  - SQRT
+  - PERCENTAGE
+- Implement IsValid() on Operation.
+- IsValid() should return true for supported operations.
+- IsValid() should return false for unknown or empty operations.
+- Create calculator-back/internal/domain/operation_test.go.
+- Use Testify assertions.
+- Test all valid operations.
+- Test invalid operation.
+- Test empty string.
+
+2. Step 2: Implement Service Layer
+
+Goal:
+
+- Encapsulate calculator business logic behind a service interface.
+- Test calculator behavior independently from HTTP.
+
+Requirements:
+
+- Create calculator-back/internal/service/calculator_service.go.
+- Define CalculatorService interface with:
+  Calculate(op domain.Operation, a float64, b float64) (float64, error)
+- Implement a struct satisfying the interface.
+- Use switch-case initially.
+- Support:
+  - ADD
+  - SUBTRACT
+  - MULTIPLY
+  - DIVIDE
+- Return an error for division by zero.
+- Return an error for invalid operations.
+- Create calculator-back/internal/service/calculator_service_test.go.
+- Use Testify.
+- Test:
+  - Add
+  - Subtract
+  - Multiply
+  - Divide
+  - Division by zero
+  - Invalid operation
+- Keep logic isolated from HTTP.
+- Do not use frameworks in the service layer.
+
+3. Step 3: Refactor Service to Strategy Pattern
+
+Goal:
+
+- Remove the switch-case from the calculator service.
+- Use a map of operations to strategy functions.
+- Follow the Open/Closed Principle.
+
+Requirements:
+
+- Replace switch-case with:
+  map[domain.Operation]func(request Request) (float64, error)
+- Keep the CalculatorService interface unchanged.
+- Move Request into calculator_service.go.
+- Use Request to aggregate operation parameters.
+- Preserve existing behavior.
+- Do not break existing tests.
+
+4. Add Remaining Operations
+
+Goal:
+
+- Extend the calculator service with the rest of the domain operations.
+
+Requirements:
+
+- Add calculator support for:
+  - EXPONENT
+  - SQRT
+  - PERCENTAGE
+- Add these operations to the strategy map.
+- Add tests for:
+  - Exponentiation
+  - Square root
+  - Percentage
+
+5. Step 4: Implement HTTP Handler Using Gin
+
+Goal:
+
+- Expose the calculator service through a REST API.
+- Keep the handler thin and test it with mocks.
+
+HTTP endpoint:
+
+- POST /calculate
+
+Request body:
+
+{
+  "operation": "ADD",
+  "a": 10,
+  "b": 5
+}
+
+Requirements:
+
+- Create calculator-back/internal/handler/calculator_handler.go.
+- Create calculator-back/internal/dto/.
+- Validate JSON parsing.
+- Validate operation enum using IsValid().
+- Call the calculator service layer.
+- Return 200 with result on success.
+- Return 400 on validation or service errors.
+- Use Gin.
+- Use httptest.
+- Use Testify.
+- Use Gomock.
+- Mock CalculatorService.
+- Test:
+  - Success case
+  - Invalid operation
+  - Service error
+- Keep the handler free of business logic.
+
+6. Step 5: Add Mock Generation and Project Setup
+
+Goal:
+
+- Enable automatic mock generation.
+- Finalize project structure for tests and generated mocks.
+
+Requirements:
+
+- Use mockgen.
+- Add go:generate directive in the service interface file:
+  //go:generate mockgen -destination=../mocks/mock_calculator.go -package=mocks calculator-back/internal/service CalculatorService
+- Ensure generated mocks compile.
+- Organize generated mocks under:
+  - calculator-back/internal/mocks
+- Add an example command for running mock generation:
+  go generate ./...
+- Add an optional Makefile with:
+  - test
+  - generate mocks
+  - service run instructions
+- Keep setup clean and idiomatic.
+- Avoid unnecessary dependencies.
+
+7. Create README Content
+
+Goal:
+
+- Create a professional README.md for the Go Calculator API.
+
+Requirements:
+
+- Include project title:
+  - Go Calculator API
+- Include a short project description.
+- List supported operations:
+  - ADD
+  - SUBTRACT
+  - MULTIPLY
+  - DIVIDE
+  - EXPONENT
+  - SQRT
+  - PERCENTAGE
+- Include tech stack:
+  - Go
+  - Gin
+  - Testify
+  - Gomock
+- Explain Clean Architecture folders:
+  - cmd/api
+  - internal/domain
+  - internal/service
+  - internal/handler
+  - internal/dto
+  - internal/mocks
+- Add getting started instructions.
+- Add API usage for POST /calculate.
+- Add example request.
+- Add example curl command.
+- Add example response.
+- Add error handling examples:
+  - Invalid operation
+  - Division by zero
+- Add test command:
+  go test ./...
+- Add mock generation command:
+  go generate ./...
+- Add future improvements:
+  - More operations
+  - OpenTelemetry observability
+  - Docker support
+
+8. Add README.md File
+
+Goal:
+
+- Persist the generated README content in the backend project.
+
+Requirements:
+
+- Add calculator-back/README.md.
+- Use the README content from the previous prompt.
+
+9. Create Prompt History File
+
+Goal:
+
+- Save a summary of all backend prompts for this project.
+
+Requirements:
+
+- Create a new folder:
+  - colculator-prompts
+- Create:
+  - colculator-prompts/back-first-step-prompts.txt
+- Summarize the backend prompts already sent in this project.
+
+10. Update Prompt History with Earlier Steps
+
+Goal:
+
+- Add missing early project prompts to the prompt history file.
+
+Requirements:
+
+- Add the first domain enum/testing step.
+- Add the earlier scaffolding prompt from the previous day in a structured way.
+- Keep the file organized and readable.
