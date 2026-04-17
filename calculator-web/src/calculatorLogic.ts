@@ -1,6 +1,56 @@
 const binaryOperators = ['+', '-', '*', '/', '^', '%']
 const rootOperator = '\u221A'
 
+export type CalculateRequest = {
+  operation: string
+  a: number
+  b: number
+}
+
+const operationByOperator: Record<string, string> = {
+  '+': 'ADD',
+  '-': 'SUBTRACT',
+  '*': 'MULTIPLY',
+  '/': 'DIVIDE',
+  '^': 'EXPONENT',
+  '%': 'PERCENTAGE',
+}
+
+export function buildCalculateRequest(expression: string): CalculateRequest {
+  const error = validateExpression(expression)
+
+  if (error) {
+    throw new Error(error)
+  }
+
+  const input = expression.trim()
+
+  if (input.startsWith(rootOperator)) {
+    return {
+      operation: 'SQRT',
+      a: parseNumber(input.slice(1)),
+      b: 0,
+    }
+  }
+
+  const operatorIndex = findOperatorIndex(input)
+  if (operatorIndex === -1) {
+    return {
+      operation: 'ADD',
+      a: parseNumber(input),
+      b: 0,
+    }
+  }
+
+  const operator = input[operatorIndex]
+
+  return {
+    operation: operationByOperator[operator],
+    a: parseNumber(input.slice(0, operatorIndex)),
+    b: parseNumber(input.slice(operatorIndex + 1)),
+  }
+}
+
 export function calculateExpression(expression: string): string {
   const error = validateExpression(expression)
 

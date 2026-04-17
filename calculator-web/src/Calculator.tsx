@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './Calculator.css'
-import { calculateExpression, validateExpression } from './calculatorLogic'
+import { calculate } from './calculatorApi'
+import { buildCalculateRequest, validateExpression } from './calculatorLogic'
 
 const rootSymbol = '\u221A'
 
@@ -20,8 +21,8 @@ const buttons = [
   '3',
   '-',
   '%',
-  '0',
   'C',
+  '0',
   '.',
   '+',
   '=',
@@ -30,13 +31,14 @@ const buttons = [
 export function Calculator() {
   const [currentInput, setCurrentInput] = useState('0')
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const validationError = validateExpression(currentInput)
   const isPendingInput = isPendingExpression(currentInput)
   const visibleError = error || (!isPendingInput ? validationError : '')
-  const isCalculateDisabled = Boolean(validationError && !isPendingInput)
+  const isCalculateDisabled = isLoading || Boolean(validationError && !isPendingInput)
 
-  function handleButtonClick(value: string) {
+  async function handleButtonClick(value: string) {
     if (value === 'C') {
       setCurrentInput('0')
       setError('')
@@ -57,8 +59,39 @@ export function Calculator() {
         return
       }
 
-      setCurrentInput((previous) => calculateExpression(previous))
+      try {
+        setIsLoading(true)
+        setError('')
+
+        const result = await calculate(buildCalculateRequest(currentInput))
+
+        setCurrentInput(String(result))
+      } catch (nextError) {
+        setError(nextError instanceof Error ? nextError.message : 'Failed to calculate')
+      } finally {
+        setIsLoading(false)
+      }
+
+      return
+    }
+
+    if (value === rootSymbol) {
       setError('')
+      setCurrentInput((previous) => {
+        if (previous === '0' || previous === 'Error') {
+          return rootSymbol
+        }
+
+        if (previous === rootSymbol) {
+          return previous
+        }
+
+        if (/^[0-9]+(?:\.[0-9]*)?$/.test(previous)) {
+          return `${rootSymbol}${previous}`
+        }
+
+        return `${previous}${rootSymbol}`
+      })
       return
     }
 
@@ -147,7 +180,7 @@ export function Calculator() {
               type="button"
               onClick={() => handleButtonClick(button)}
             >
-              {button}
+              {button === '=' && isLoading ? '...' : button}
             </button>
           ))}
         </div>
@@ -157,5 +190,8 @@ export function Calculator() {
 }
 
 function isPendingExpression(value: string) {
-  return /^-?(?:\d+\.?\d*|\.\d+)[+\-*/^%]$/.test(value)
+  return (
+    /^-?(?:\d+\.?\d*|\.\d+)[+\-*/^%]$/.test(value) ||
+    value === rootSymbol
+  )
 }

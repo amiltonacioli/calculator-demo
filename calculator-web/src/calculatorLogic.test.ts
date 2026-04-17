@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { calculateExpression, validateExpression } from './calculatorLogic'
+import { buildCalculateRequest, calculateExpression, validateExpression } from './calculatorLogic'
 
 const rootSymbol = '\u221A'
 
@@ -53,5 +53,21 @@ describe('calculateExpression', () => {
     expect(validateExpression(`${rootSymbol}-9`)).toBe(
       'Cannot calculate square root of a negative number',
     )
+  })
+
+  it('builds backend request for addition', () => {
+    expect(buildCalculateRequest('10+5')).toEqual({
+      operation: 'ADD',
+      a: 10,
+      b: 5,
+    })
+  })
+
+  it('builds backend request for square root', () => {
+    expect(buildCalculateRequest(`${rootSymbol}25`)).toEqual({
+      operation: 'SQRT',
+      a: 25,
+      b: 0,
+    })
   })
 })

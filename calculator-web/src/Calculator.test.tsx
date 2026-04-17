@@ -1,11 +1,19 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { Calculator } from './Calculator'
 
 const rootSymbol = '\u221A'
 
 describe('Calculator', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
   it('renders calculator layout', () => {
     render(<Calculator />)
 
@@ -70,7 +78,12 @@ describe('Calculator', () => {
     expect(screen.getByLabelText(/current input/i)).toHaveTextContent('0')
   })
 
-  it('updates result when equals is clicked', () => {
+  it('updates result when equals is clicked', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ result: 15 }),
+    } as Response)
+
     render(<Calculator />)
 
     fireEvent.click(screen.getByRole('button', { name: '7' }))
@@ -78,7 +91,59 @@ describe('Calculator', () => {
     fireEvent.click(screen.getByRole('button', { name: '8' }))
     fireEvent.click(screen.getByRole('button', { name: '=' }))
 
-    expect(screen.getByLabelText(/current input/i)).toHaveTextContent('15')
+    await waitFor(() => {
+      expect(screen.getByLabelText(/current input/i)).toHaveTextContent('15')
+    })
+
+    expect(fetch).toHaveBeenCalledWith('http://localhost:8080/calculate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        operation: 'ADD',
+        a: 7,
+        b: 8,
+      }),
+    })
+  })
+
+  it('shows loading state while calculating', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ result: 2 }),
+    } as Response)
+
+    render(<Calculator />)
+
+    fireEvent.click(screen.getByRole('button', { name: '1' }))
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    fireEvent.click(screen.getByRole('button', { name: '1' }))
+    fireEvent.click(screen.getByRole('button', { name: '=' }))
+
+    expect(screen.getByRole('button', { name: '...' })).toBeDisabled()
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/current input/i)).toHaveTextContent('2')
+    })
+  })
+
+  it('shows API error response', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: 'backend error' }),
+    } as Response)
+
+    render(<Calculator />)
+
+    fireEvent.click(screen.getByRole('button', { name: '7' }))
+    fireEvent.click(screen.getByRole('button', { name: '+' }))
+    fireEvent.click(screen.getByRole('button', { name: '8' }))
+    fireEvent.click(screen.getByRole('button', { name: '=' }))
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toHaveTextContent('backend error')
+    })
   })
 
   it('shows error for invalid input', () => {
