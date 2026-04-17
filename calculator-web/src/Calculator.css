@@ -153,3 +153,68 @@ button {
   outline: 3px solid rgba(22, 119, 199, 0.2);
   outline-offset: 2px;
 }
+
+@media (max-width: 480px) {
+  .calculator-page {
+    align-items: stretch;
+    padding: 12px;
+  }
+
+  .calculator-shell {
+    align-self: center;
+    gap: 12px;
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  .calculator-shell h1 {
+    font-size: 24px;
+  }
+
+  .calculator-display {
+    font-size: 32px;
+    min-height: 72px;
+    padding: 12px;
+  }
+
+  .calculator-feedback {
+    grid-template-columns: minmax(0, 1fr) 78px;
+  }
+
+  .calculator-grid {
+    gap: 8px;
+  }
+
+  .calculator-button {
+    font-size: 20px;
+    width: 100%;
+  }
+
+  .calculator-delete-button {
+    font-size: 14px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 340px) {
+  .calculator-page {
+    padding: 8px;
+  }
+
+  .calculator-shell {
+    padding: 12px;
+  }
+
+  .calculator-display {
+    font-size: 28px;
+    min-height: 64px;
+  }
+
+  .calculator-grid {
+    gap: 6px;
+  }
+
+  .calculator-button {
+    font-size: 18px;
+  }
+}

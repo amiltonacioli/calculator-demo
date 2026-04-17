@@ -6,6 +6,13 @@ import { Calculator } from './Calculator'
 const rootSymbol = '\u221A'
 
 describe('Calculator', () => {
+  it('renders calculator layout', () => {
+    render(<Calculator />)
+
+    expect(screen.getByRole('heading', { name: /calculator/i })).toBeInTheDocument()
+    expect(screen.getByLabelText(/calculator buttons/i)).toBeInTheDocument()
+  })
+
   it('renders display', () => {
     render(<Calculator />)
 
