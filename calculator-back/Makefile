@@ -1,12 +1,30 @@
-.PHONY: test generate generate-mocks run
+.PHONY: tidy run build test coverage coverage-report generate generate-mocks generate-wire docker-build
+
+tidy:
+	go mod tidy
+
+run:
+	go run .
+
+build:
+	go build -o server .
+
+generate: generate-mocks generate-wire
+
+generate-wire:
+	go run -mod=mod github.com/google/wire/cmd/wire .
+
+generate-mocks:
+	go generate ./internal/service
 
 test:
 	go test ./...
 
-generate: generate-mocks
+coverage:
+	go test -coverprofile=coverageprofile ./internal/domain ./internal/handler ./internal/service
 
-generate-mocks:
-	go generate ./...
+coverage-report: coverage
+	go tool cover -func=coverageprofile
 
-run:
-	go run .
+docker-build:
+	docker build -t calculator-back .

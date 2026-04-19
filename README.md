@@ -233,3 +233,4 @@ calculator-prompts/
 - Add CI/CD with test and coverage checks
 - Add a backend health endpoint
 - Expand OpenTelemetry tracing and metrics
+- Introduce a dedicated configuration layer to support multiple environments (development, staging, production) with environment-specific settings and better runtime flexibility.
