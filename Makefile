@@ -29,7 +29,7 @@ coverage-web:
 	cd calculator-web && npm run test:coverage
 
 coverage-back:
-	cd calculator-back && go test -coverprofile=coverageprofile ./...
+	cd calculator-back && go test -coverprofile=coverageprofile ./internal/domain ./internal/handler ./internal/service
 	cd calculator-back && go tool cover -func=coverageprofile
 
 up:

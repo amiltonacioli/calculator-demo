@@ -81,6 +81,16 @@ func TestCalculatorService_Calculate_DivisionByZero(t *testing.T) {
 	assert.Equal(t, 0.0, result)
 }
 
+func TestCalculatorService_Calculate_NegativeSquareRoot(t *testing.T) {
+	service := NewCalculatorService()
+
+	result, err := service.Calculate(domain.SQRT, -25, 0)
+
+	require.Error(t, err)
+	assert.ErrorIs(t, err, ErrNegativeSquareRoot)
+	assert.Equal(t, 0.0, result)
+}
+
 func TestCalculatorService_Calculate_InvalidOperation(t *testing.T) {
 	service := NewCalculatorService()
 

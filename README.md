@@ -202,7 +202,7 @@ Run backend coverage:
 
 ```bash
 cd calculator-back
-go test -coverprofile=coverageprofile ./...
+go test -coverprofile=coverageprofile ./internal/domain ./internal/handler ./internal/service
 go tool cover -func=coverageprofile
 ```
 

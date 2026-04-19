@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	ErrDivisionByZero   = errors.New("division by zero")
-	ErrInvalidOperation = errors.New("invalid operation")
+	ErrDivisionByZero     = errors.New("division by zero")
+	ErrInvalidOperation   = errors.New("invalid operation")
+	ErrNegativeSquareRoot = errors.New("cannot calculate square root of a negative number")
 )
 
 //go:generate mockgen -destination=../mocks/mock_calculator.go -package=mocks calculator-back/internal/service CalculatorService
@@ -81,6 +82,10 @@ func exponent(request Request) (float64, error) {
 }
 
 func squareRoot(request Request) (float64, error) {
+	if request.A < 0 {
+		return 0, ErrNegativeSquareRoot
+	}
+
 	return math.Sqrt(request.A), nil
 }
 
