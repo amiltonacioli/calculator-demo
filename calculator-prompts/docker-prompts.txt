@@ -1,0 +1,36 @@
+Docker and Deployment Prompts Summary
+
+1. Add Docker Compose Support
+
+Goal:
+
+- Containerize the full-stack calculator project.
+- Run the Go backend and React frontend together with Docker Compose.
+
+Requirements:
+
+- Add a multi-stage Dockerfile for the Go backend.
+- Add a multi-stage Dockerfile for the React/Vite frontend.
+- Serve frontend static files with nginx.
+- Add docker-compose.yml with backend and frontend services.
+- Expose backend on port 8080.
+- Expose frontend on port 3000.
+- Configure frontend API calls using VITE_API_URL.
+- Use Docker service names so containers can communicate.
+- Add .dockerignore files for frontend and backend.
+- Add Makefile targets for up, down, logs, and rebuild.
+
+2. Update README With Docker Instructions
+
+Goal:
+
+- Document how to run the full stack with Docker.
+
+Requirements:
+
+- Add Docker and Docker Compose prerequisites.
+- Add docker compose up --build instructions.
+- Add Makefile Docker command examples.
+- Document frontend and backend URLs.
+- Explain that nginx proxies frontend /api requests to the backend service.
+- Remove Docker support from future improvements after implementation.

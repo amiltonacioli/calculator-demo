@@ -170,3 +170,20 @@ Requirements:
 - Update documentation and commands.
 - Add coverage commands.
 - Add prompt history for frontend work.
+
+10. Responsive Layout Refinements
+
+Goal:
+
+- Improve calculator sizing across desktop, tablet, and mobile browser widths.
+
+Requirements:
+
+- Make the calculator look larger on desktop and tablet screens.
+- Use available width while capping large screens around 900px.
+- Keep the calculator responsive on iPhone SE, iPhone Max, tablets, and desktop.
+- Fix the root layout so the app can use 100% of the browser width.
+- Remove default Vite body centering styles that caused the calculator to shrink.
+- Prevent the calculator from exceeding the viewport height.
+- Size the calculator using both viewport width and viewport height.
+- Keep the button grid stable and readable after resizing.

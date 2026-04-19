@@ -33,6 +33,7 @@ calculator-demo/
 
 - Go installed
 - Node.js and npm installed
+- Docker and Docker Compose installed, if running with containers
 - `make` optional, because equivalent commands are listed below
 
 ## Setup
@@ -75,6 +76,45 @@ The frontend runs at:
 
 ```text
 http://localhost:5173
+```
+
+## Run With Docker
+
+Build and start the full stack from the repository root:
+
+```bash
+docker compose up --build
+```
+
+Or use the Make target:
+
+```bash
+make rebuild
+```
+
+The Docker setup exposes:
+
+```text
+Frontend: http://localhost:3000
+Backend:  http://localhost:8080
+```
+
+The frontend container serves the production Vite build with nginx and proxies API requests from `/api` to the backend service inside Docker Compose.
+
+Common Docker commands:
+
+```bash
+docker compose up
+docker compose down
+docker compose logs -f
+```
+
+Equivalent Make targets:
+
+```bash
+make up
+make down
+make logs
 ```
 
 ## API Usage
@@ -190,7 +230,6 @@ calculator-prompts/
 
 ## Future Improvements
 
-- Add Docker support for full-stack deployment
 - Add CI/CD with test and coverage checks
 - Add a backend health endpoint
 - Expand OpenTelemetry tracing and metrics

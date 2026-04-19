@@ -1,4 +1,4 @@
-.PHONY: install dev web backend build test test-web test-back coverage coverage-web coverage-back
+.PHONY: install dev web backend build test test-web test-back coverage coverage-web coverage-back up down logs rebuild
 
 install:
 	cd calculator-web && npm install
@@ -31,3 +31,15 @@ coverage-web:
 coverage-back:
 	cd calculator-back && go test -coverprofile=coverageprofile ./...
 	cd calculator-back && go tool cover -func=coverageprofile
+
+up:
+	docker compose up
+
+down:
+	docker compose down
+
+logs:
+	docker compose logs -f
+
+rebuild:
+	docker compose up --build

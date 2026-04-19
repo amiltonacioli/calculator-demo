@@ -1,6 +1,7 @@
 import type { CalculateRequest } from './calculatorLogic'
 
-const calculateUrl = 'http://localhost:8080/calculate'
+const apiBaseUrl = (import.meta.env.VITE_API_URL ?? 'http://localhost:8080').replace(/\/$/, '')
+const calculateUrl = `${apiBaseUrl}/calculate`
 
 type CalculateResponse = {
   result: number
